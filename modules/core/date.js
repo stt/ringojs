@@ -16,6 +16,8 @@
 
 module.shared = true;
 
+importClass(org.ringojs.util.DateUtils);
+
 /**
  * @fileoverview Adds useful methods to the JavaScript Date type.
  */
@@ -54,12 +56,11 @@ Object.defineProperty(Date.prototype, "format", {
         if (typeof locale == "string") {
             locale = new java.util.Locale(locale);
         }
-        if (typeof timezone == "string") {
-            timezone = java.util.TimeZone.getTimeZone(timezone);
-        }
         var sdf = locale ? new java.text.SimpleDateFormat(format, locale)
                          : new java.text.SimpleDateFormat(format);
-        if (timezone && timezone != sdf.getTimeZone())
+        if (typeof timezone == "string")
+            DateUtils.resolveTimeZone(sdf, timezone);
+        else if (timezone)
             sdf.setTimeZone(timezone);
         return sdf.format(this);
     }
