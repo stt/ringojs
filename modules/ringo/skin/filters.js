@@ -211,12 +211,17 @@ function substring_filter(input, tag) {
  * @param format
  */
 function dateFormat_filter(input, tag) {
-   var format = tag.getParameter("format") || tag.parameters[0];
-   if (!input) {
+   if (!input || input.constructor != Date)
       return;
-   } else {
-      return input.format(format);
+   var args = [
+      tag.getParameter("format") || tag.parameters[0],
+      new java.util.Locale(tag.getParameter("locale") || tag.parameters[1])
+   ];
+   var tz = tag.getParameter("timezone") || tag.parameters[2];
+   if(args.length == 2 && tz) {
+      args.push(tz);
    }
+   return input.format.apply(input, args);
 }
 
 (function() {
